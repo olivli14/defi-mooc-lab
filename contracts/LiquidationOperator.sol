@@ -136,7 +136,7 @@ contract LiquidationOperator is IUniswapV2Callee {
     uint8 public constant health_factor_decimals = 18;
 
     // TODO: define constants used in the contract including ERC-20 tokens, Uniswap Pairs, Aave lending pools, etc. */
-    //    *** Your code here ***
+    address me = addres(this);
     // END TODO
 
     // some helper function, it is totally fine if you can finish the lab without using these function
@@ -184,7 +184,9 @@ contract LiquidationOperator is IUniswapV2Callee {
     }
 
     // TODO: add a `receive` function so that you can withdraw your WETH
-    //   *** Your code here ***
+    receive() external payable{
+
+    }
     // END TODO
 
     // required by the testing script, entry for your liquidation call
