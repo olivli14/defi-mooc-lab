@@ -134,22 +134,21 @@ interface IUniswapV2Pair {
 
 contract LiquidationOperator is IUniswapV2Callee {
     uint8 public constant health_factor_decimals = 18;
-
+    //***note to myself, add the replay amount, look at initial contract, add hf threshold */
     // TODO: define constants used in the contract including ERC-20 tokens, Uniswap Pairs, Aave lending pools, etc. */
-    address me = addres(this);
+    address me = address(this);
     address target_address = 0x59CE4a2AC5bC3f5F225439B2993b86B42f6d3e9F;
     address USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7; 
     address WBTC = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
     address WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
     ILendingPool lending_pool = ILendingPool(0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9);
-
     IUniswapV2Factory uniswap = IUniswapV2Factory(0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f);
 
     IUniswapV2Pair USDT_WETH = IUniswapV2Pair(uniswap.getPair(USDT, WETH));
     IUniswapV2Pair WBTC_WETH = IUniswapV2Pair(uniswap.getPair(WBTC, WETH));
     address USDT_WETH_pair = address(USDT_WETH);
-    adddres WBTC_WETH = address(WBTC_WETH);
+    address WBTC_WETH_pair = address(WBTC_WETH);
 
     IERC20 usdt_pool = IERC20(USDT);
     IERC20 wbtc_pool = IERC20(WBTC);
