@@ -150,8 +150,6 @@ contract LiquidationOperator is IUniswapV2Callee {
 
     IUniswapV2Pair USDT_WETH = IUniswapV2Pair(uniswap.getPair(USDT, WETH));
     IUniswapV2Pair WBTC_WETH = IUniswapV2Pair(uniswap.getPair(WBTC, WETH));
-    address USDT_WETH_pair = address(USDT_WETH);
-    address WBTC_WETH_pair = address(WBTC_WETH);
 
     IERC20 usdt_pool = IERC20(USDT);
     IERC20 wbtc_pool = IERC20(WBTC);
@@ -204,7 +202,6 @@ contract LiquidationOperator is IUniswapV2Callee {
 
     // TODO: add a `receive` function so that you can withdraw your WETH
     receive() external payable{
-        require(msg.sender == address(WETH), "Only WETH pool can send ETH");
 
 
     }
@@ -232,7 +229,9 @@ contract LiquidationOperator is IUniswapV2Callee {
         // 3. Convert the profit into ETH and send back to sender
         //    *** Your code here ***
         USDT_WETH.swap(0, to_repay, me, abi.encode("flash loan"));
-        weth_pool.withdraw(weth_pool.balanceOf(me));
+        //weth_pool.withdraw(weth_pool.balanceOf(me));
+        uint256 weth_balance = weth_pool.balanceOf(me);
+        weth_pool.withdraw(weth_balance);
         payable(msg.sender).transfer(me.balance);
         
         // END TODO
@@ -254,19 +253,19 @@ contract LiquidationOperator is IUniswapV2Callee {
 
         // 2.1 liquidate the target user. call approve first!
         usdt_pool.approve(address(lending_pool), amount1); 
-        lending_pool.liquidationCall(WBTC, USDT, target_address, amount1, false);
+        lending_pool.liquidationCall(WBTC, USDT, target_address, type(uint256).max, false);
 
         // 2.2 swap WBTC for other things or repay directly
         uint256 WBTC_balance = wbtc_pool.balanceOf(me);
-        wbtc_pool.transfer(WBTC_WETH_pair, WBTC_balance);
-        uint256 WETH_out = getAmountOut(WBTC_balance, wbtc, weth1);
+        wbtc_pool.transfer(address(WBTC_WETH), WBTC_balance);
+        uint256 WETH_out = getAmountOut(WBTC_balance, wbtc, weth2);
         WBTC_WETH.swap(0, WETH_out, me, "");
        
 
         // 2.3 repay
     
-        uint256 new_amount = getAmountIn(amount1, weth2, usdt);
-        weth_pool.transfer(USDT_WETH_pair, new_amount);
+        uint256 new_amount = getAmountIn(amount1, weth1, usdt);
+        weth_pool.transfer(address(USDT_WETH), new_amount);
 
         // END TODO
     }
