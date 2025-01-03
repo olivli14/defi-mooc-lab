@@ -204,6 +204,8 @@ contract LiquidationOperator is IUniswapV2Callee {
 
     // TODO: add a `receive` function so that you can withdraw your WETH
     receive() external payable{
+        require(msg.sender == address(WETH), "Only WETH pool can send ETH");
+
 
     }
     // END TODO
@@ -215,6 +217,7 @@ contract LiquidationOperator is IUniswapV2Callee {
         // 0. security checks and initializing variables
         //    *** Your code here ***
         (,,,,, uint256 health_factor) = lending_pool.getUserAccountData(target_address);
+        console.log(health_factor);
 
         // 1. get the target user account data & make sure it is liquidatable
         require(health_factor < health_factor_threshold, 'ERROR: not liquidatable');
